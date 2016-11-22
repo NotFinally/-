@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+	.circle{ 
+		width:100px;
+		height:100px; 
+		background:#fc0;
+		border-radius: 50%;      
+		-moz-border-radius: 50%;      
+		-webkit-border-radius: 50%;
+		position:absolute;
+		z-index:2;
+		}
+		*{
+		margin:0;
+		padding:0;
+		}
+	#square{
+		width:400px;
+		height:200px;
+		background:#ccc;
+		position:absolute;
+		z-index:1;
+		overflow:hidden;
+		top: 50%;
+		margin-top: -100px;
+		left: 50%;
+		margin-left: -200px;
+		
+		}
+		
+	#c1{
+		top:150px;
+		left:350px;
+		}
+	#c2{
+		top:-50px;
+		left:-50px;
+		}
+</style>
+<title>居中</title>
+</head>
+<div id="square">
+<div class="circle" id="c1"></div>
+<div class="circle" id="c2"></div>
+</div>
+<body>
+</body>
+</html>
