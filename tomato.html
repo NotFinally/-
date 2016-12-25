@@ -1,0 +1,186 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body
+{
+	height:100%;
+	width:100%;
+	position:absolute;
+}
+#tomato
+{
+	border-color:#000000;
+	border-style:solid;
+	border-width:3px;
+	height:400px;
+	width:400px;
+	border-radius:50%;
+	position:relative;
+	margin-left:-200px;
+	margin-top:-200px;
+	top:50%;
+	left:50%;
+}
+#workbox
+{
+	height:80px;
+	width:100px;
+	position:absolute;
+	top:50px;
+	left:75px;
+	box-sizing:border-box;
+	text-align:center;
+	font-size:18px;
+}
+#relaxbox
+{
+	height:80px;
+	width:100px;
+	position:absolute;
+	top:50px;
+	left:225px;
+	box-sizing:border-box;
+	text-align:center;
+	font-size:18px;
+}
+#timebox
+{
+	height:150px;
+	width:250px;
+	position:absolute;
+	top:180px;
+	left:75px;
+	text-align:center;
+	cursor:pointer;
+}
+#worktime,#relaxtime
+{
+	width:80px;
+	height:30px;
+	position:relative;
+	top:-12px;
+	text-align:center;
+	font-size:18px;
+}
+#state
+{
+	font-size:30px;
+	margin:10px;
+}
+#mintime,#sectime
+{
+	font-size:60px;
+	margin:5px;
+}
+.error
+{
+	margin-top:-10px;
+	color:#F50206;
+	display:none;
+	
+}
+</style>
+<title>番茄时钟</title>
+</head>
+
+<body>
+<div id="tomato">
+	<div id="workbox" title="0-60min">
+		<p>work time</p>
+		<input id="worktime" type="text" value="25">
+		<p class="error">error input</p>
+	</div>
+	<div id="relaxbox" title="0-60min">
+		<p>relax time</p>
+		<input id="relaxtime" type="text" value="5">
+		<p class="error">error input</p>
+	</div>
+	<div id="timebox" title="click to start/stop">
+		<p id="state">work time</p>
+		<span id="mintime">25</span>
+		<span style="font-size:60px">:</span>
+		<span id="sectime">00</span>
+	</div>
+</div>
+
+<script src="jquery-3.1.1.js"></script>
+<script>
+var worktime = 0;
+var relaxtime = 0;
+var relay = 1;
+var x;
+$("#worktime").on("blur",check);
+$("#relaxtime").on("blur",check);
+$("#timebox").on("click",timeclick);
+function check()
+{
+	if(0<$(this).val()&&$(this).val()<60)
+	{
+		$($(this).next()).hide();
+		relay = 1;
+	}
+	else
+	{
+		$($(this).next()).show();	
+		relay = 0;
+	}	
+}
+function timeclick()
+{
+	if(relay)
+	{
+		if($("#tomato").css("border-top-color")=="rgb(0, 0, 0)")//如果未启动
+		{
+			worktime = $("#worktime").val();
+			relaxtime = $("#relaxtime").val();
+			$("#mintime").text(worktime);
+			$("#tomato").css("border-color","rgb(0, 0, 255)");
+			$("input").attr("disabled",true);
+			x = setInterval(count,1000);
+		}
+		else//如果已启动
+		{
+			$("input").attr("disabled",false);
+			$("#tomato").css("border-color","rgb(0, 0, 0)");
+			clearInterval(x);
+			$("#mintime").text(worktime);
+			$("#sectime").text("00");
+			$("#state").text("work time");	
+		}
+	}
+}
+
+function count()
+{
+	var mintime = parseInt($("#mintime").text());
+	var sectime = parseInt($("#sectime").text());
+	if(mintime==0&&sectime==0&&$("#tomato").css("border-top-color")=="rgb(0, 0, 255)")	//分钟为0且wroktime
+	{
+		$("#mintime").text(relaxtime);
+		$("#sectime").text("00");
+		$("#state").text("relax time");	
+		$("#tomato").css("border-color","rgb(255, 0, 0)");
+		return;
+	}
+	if(mintime==0&sectime==0&&$("#tomato").css("border-top-color")=="rgb(255, 0, 0)")	//分钟为0且relaxtime
+	{
+		$("#mintime").text(worktime);
+		$("#sectime").text("00");
+		$("#state").text("work time");	
+		$("#tomato").css("border-color","rgb(0, 0, 255)");
+		return;
+	}
+	if(mintime!=0&&sectime==0)//分钟不为0，秒钟为0
+	{
+		$("#mintime").text(mintime-1);
+		$("#sectime").text("59");
+		return;
+	}
+	$("#sectime").text(sectime-1);	
+}
+
+</script>
+</body>
+</html>
