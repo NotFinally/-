@@ -1,0 +1,333 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Simon Game</title>
+<style>
+*
+{
+	margin:0px;
+	padding:0px;
+	-webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;	
+}
+body
+{
+	position:absolute;
+	height:100%;
+	width:100%;
+}
+#bigbox
+{
+	background-color:#333;
+	width:400px;
+	height:400px;
+	top:50%;
+	left:50%;
+	margin-top:-200px;
+	margin-left:-200px;
+	box-sizing:border-box;
+	position:relative;
+	border-radius:50%;
+	z-index:1;
+	box-shadow:0px 0px 8px #222;
+}
+#box1,#box2,#box3,#box4
+{
+	box-sizing:border-box;
+	width:150px;
+	height:150px;
+	z-index:2;
+	position:absolute;
+}
+#box1
+{
+	background-color:#00a74a;
+	top:33px;
+	left:33px;
+	border-top-left-radius:100%;	
+}
+#box2
+{
+	background-color:#9f0f17;
+	top:33px;
+	left:216.5px;
+	border-top-right-radius:100%;	
+}
+#box3
+{
+	background-color:#cca707;
+	top:216.5px;
+	left:33px;
+	border-bottom-left-radius:100%;	
+}
+#box4
+{
+	background-color:#094a8f;
+	top:216.5px;
+	left:216.5px;
+	border-bottom-right-radius:100%;	
+}
+
+#center
+{
+	z-index:3;
+	box-sizing:border-box;
+	background-color:#ECE7EE;
+	height:200px;
+	width:200px;	
+	border-radius:50%;
+	position:absolute;
+	top:100px;
+	left:100px;
+	border:#333 20px solid;
+	text-align:center;
+}
+#countbox
+{
+	position:absolute;
+	top:70px;
+	left:20px;
+}
+#startbox
+{
+	position:absolute;
+	top:70px;
+	left:100px;	
+}
+#switchbox
+{
+	position:absolute;
+	top:115px;
+	left:36px;	
+}
+#count
+{
+	border:#333 3px solid;
+	border-radius:3px;
+	background-color:rgb(50, 5, 12);
+	color:rgb(220, 13, 41);
+}
+#start
+{
+	box-sizing:border-box;
+	height:23px;
+	width:23px;
+	background-color:#FF0000;
+	border-radius:50%;
+	border:#333 solid 4px;
+	margin:auto;
+	box-shadow:0px 2px 3px rgb(34, 34, 34);
+	cursor:pointer;
+	position:relative;
+}
+#switch
+{
+	display:inline-block;
+	width:40px;
+	height:20px;
+	box-sizing:border-box;
+	border-radius:3px;
+	background:#333;
+	position:relative;
+	text-align:center;
+	cursor:pointer;
+}
+.text
+{
+	display:inline-block;
+	vertical-align:baseline;
+}
+#switchblock
+{
+	height:16px;
+	width:16px;
+	background-color:#3193DE;
+	border-radius:2px;
+	position:relative;
+	top:2px;
+	left:22px;
+
+}
+
+</style>
+</head>
+
+<body>
+<div id="bigbox">
+		<div id="box1"></div>
+		<div id="box2"></div>
+		<div id="box3"></div>
+		<div id="box4"></div>
+		<div id="center">
+		<p style="font-size:36px;margin:15px auto">Simon</p>
+			<div id="countbox">
+				<p id="count">--</p>
+				<p style="margin-top:-3px">count</p>
+			</div>
+			<div id="startbox">
+				<div id="start"></div>
+				<p>start</p>
+			</div>
+			<div id="switchbox">
+				<p class="text">on</p>
+				<div id="switch">
+					<div id="switchblock"></div>
+				</div>
+				<p class="text">off</p>
+			</div>
+		
+		</div>
+</div>
+
+<script src="jquery-3.1.1.js"></script>
+<script>
+var gameSwitch = false;
+var answer = [1];
+var player = [];
+var i = 0;
+var j = 0;
+var a1,a2,a3,a4,a5;
+$("#switch").on("click",switchFun);
+$("#start").on("mouseup mouseleave",startLeave);
+
+function switchFun()//开关键转换
+{
+	if(!gameSwitch)//按下打开键
+	{
+		gameSwitch = !gameSwitch;
+		$("#switchblock").css("left","2px");
+		$("#count").text("00");	
+	}
+	else//按下关闭键
+	{
+		gameSwitch = !gameSwitch;
+		$("#switchblock").css("left","22px");
+		$("#count").text("--");	
+		initAll();
+		///////////////////////待添加关闭程序
+	}	
+}	
+$("#start").mousedown(function()//按下开始建
+{
+	$("#start").css({"box-shadow":"0px 1px 1px rgb(34, 34, 34)","top":"1px"});	
+	if(gameSwitch)//如果开关打开
+	{//初始化所有
+		initAll();
+		answer = [];
+		answer.push(Math.ceil(4*Math.random()));//随机添加一个1-4的数
+		answerShow();
+		/////////////////////待添加关闭程序
+	}
+});
+function initAll()
+{
+	$("#box1").css("background-color","#00a74a");
+	$("#box2").css("background-color","#9f0f17");
+	$("#box3").css("background-color","#cca707");
+	$("#box4").css("background-color","#094a8f");
+	$("#box1,#box2,#box3,#box4").css("cursor","default");
+	$("#box1,#box2,#box3,#box4").unbind();//移除所有box事件
+	clearTimeout(a1);
+	clearTimeout(a2);
+	clearTimeout(a3);
+	clearTimeout(a4);
+	player = [];
+	answer = [];
+	i = 0;
+		
+}
+function startLeave()//start按键松开效果
+{
+	$("#start").css({"box-shadow":"0px 2px 3px rgb(34, 34, 34)","top":"0px"});	
+};
+
+function answerShow()//循环显示box
+{
+	
+	if(answer.length<9)
+	{
+		$("#count").text("0"+answer.length);
+	}
+	else
+		$("#count").text(answer.length);		
+	$("#box1").css("background-color","#00a74a");
+	$("#box2").css("background-color","#9f0f17");
+	$("#box3").css("background-color","#cca707");
+	$("#box4").css("background-color","#094a8f");
+	if(i==answer.length)//当全部演示完毕
+	{
+		i = 0;
+		play();	
+	}	
+	else
+	{
+		a1 = setTimeout("heightLight('"+answer[i]+"')",750);	
+		a2 = setTimeout(answerShow,1500);	
+		i++;
+	}
+}
+
+function boxClick()//box按下：高亮对应box,player数组push
+{
+	var num = parseInt($(this).attr("id")[3]);
+	heightLight(num);
+	player.push(num);
+}
+function boxClickLeave()//box松开：恢复box颜色，检验按键正确性
+{
+	$("#box1").css("background-color","#00a74a");
+	$("#box2").css("background-color","#9f0f17");
+	$("#box3").css("background-color","#cca707");
+	$("#box4").css("background-color","#094a8f");
+	if(player[player.length-1]!=answer[player.length-1])//如果按键错误
+	{
+		$("#count").text("!!");//count显示！！
+		$("#box1,#box2,#box3,#box4").css("cursor","default");
+		$("#box1,#box2,#box3,#box4").unbind();
+		//移除所有box事件
+		player = [];
+		a3 = setTimeout(answerShow,1000);//1s后重新演示一遍
+		
+	}	
+	if(player.length==answer.length) //如果全部正确
+	{
+		$("#box1,#box2,#box3,#box4").css("cursor","default");
+		$("#box1,#box2,#box3,#box4").unbind();
+		//移除所有box事件
+		player = [];
+		answer.push(Math.ceil(4*Math.random()));//随机添加一个1-4的数
+		a4 = setTimeout(answerShow,500);//继续演示
+	}
+}
+function play()
+{
+	$("#box1,#box2,#box3,#box4").css("cursor","pointer");
+	$("#box1,#box2,#box3,#box4").on("mousedown",boxClick);
+	$("#box1,#box2,#box3,#box4").on("mouseup mouseleave",boxClickLeave);
+}
+
+function heightLight(num)//根据num高亮响应box
+{
+	switch(parseInt(num))
+	{
+		case 1:
+			$("#box1").css("background-color","#12ff7c");
+			break;
+		case 2:
+			$("#box2").css("background-color","#ff4c4c");
+			break;	
+		case 3:
+			$("#box3").css("background-color","#fed93f");
+			break;	
+		case 4:
+			$("#box4").css("background-color","#1c8cff");
+			break;	
+	}	
+}
+</script>
+
+</body>
+</html>
