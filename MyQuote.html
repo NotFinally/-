@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>MyQuote</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  vertical-align: baseline;
+}
+footer
+{
+	margin:0 auto;
+	text-align:center;
+	color:#FFFFFF;
+}
+body
+{
+	background:#8CE5E7;
+	font-family: 'Raleway', sans-serif;
+ 	font-weight:400;
+}
+#quotebox
+{
+	margin:8% auto auto auto;
+	text-align:center;
+	width:450px;
+  	padding:40px 50px;
+	background-color:#FFFFFF;
+	color:#8CE5E7;
+	border-radius:3px;
+}
+
+#authorbox
+{
+	text-align:right;
+	padding:0 2em 0 0;
+}
+#textbox
+{
+	text-align:left;
+	padding:0 0 0 2em;
+}
+
+</style>
+
+</head>
+
+<body>
+<div id="quotebox">
+	<div id="textbox">
+    	<span id="text">Do your self<br>The source of pain is angry about your useless.</span>
+    </div>
+    <div id="authorbox">
+    	- <span id="author">Kelvin</span>
+    </div>
+    <div id="buttons">
+    	<button id="save" title="save this quote" onClick="alert(sorry);">save</button>
+        <button id="newquote" onClick="GetQueto();">newquote</button>
+    </div>
+</div>
+<footer>
+	by 钟凯祥
+</footer>
+<script src="jquery-3.1.1.js"></script>
+<script>
+
+var colors = ['#16a085', '#27ae60', '#2c3e50', '#f39c12', '#e74c3c', '#9b59b6', '#FB6964', '#342224', "#472E32", "#BDBB99", "#77B1A9", "#73A857"];
+var sorry = "暂时没有实现此效果哦~";
+function GetQueto()
+{
+	$.ajax
+	({
+		headers: 
+		{
+   	 		"X-Mashape-Key": "OivH71yd3tmshl9YKzFH7BTzBVRQp1RaKLajsnafgL2aPsfP9V",
+   			 Accept: "application/json",
+    		"Content-Type": "application/x-www-form-urlencoded"
+   		},
+    	url: 'https://andruxnet-random-famous-quotes.p.mashape.com/cat=',
+		success:function(response)
+		{
+			r = JSON.parse(response);
+			//var quote = r.quote;
+			//$("#text").text(r.quote);
+			//$("#author").text(r.author);
+			var color = Math.round(Math.random()*colors.length);
+			$("#authorbox").animate({opacity:0},500,function(){
+				$("#author").text(r.author);
+				$("#authorbox").animate({opacity:1},500);
+				});
+			$("#text").animate({opacity:0},500,function(){
+				$("#text").text(r.quote);
+				$("#text").animate({opacity:1,},500);
+				});
+		}
+	});
+}
+</script>
+
+</body>
+</html>
