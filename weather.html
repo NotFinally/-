@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>weather</title>
+<style>
+	#box
+	{
+		margin:0 auto;
+		border:1px #000000 solid;
+		width:400px;
+	}
+</style>
+</head>
+
+<body>
+
+<div id="box">
+	城市：<input type="text" id="city"><button onClick="GetWeather();">获取</button>
+	<br>温度：<span id="temperature"></span>
+	<br>天气：<span id="weather"></span>
+	<br>湿度：<span id="humidity"></span>
+	<br>着装建议:<span id="clothes"></span>
+	
+</div>
+
+<script src="jquery-3.1.1.js"></script>
+<script>
+	function GetWeather()
+	{
+		var city = encodeURIComponent($("#city").val());
+		var url = "http:\/\/v.juhe.cn\/weather\/index?format=1\&type=json\&cityname=" + city +"\&key=70026f7442fce80e11c55c3502af51cc";
+		$.ajax({
+			url:url,
+			type:"GET",
+			dataType:"JSONP",
+			success:function(r){
+				if(r.resultcode=="200")
+				{
+					$("#temperature").text(r.result.today.temperature);
+					$("#weather").text(r.result.today.weather);
+					$("#humidity").text(r.result.sk.humidity);
+					$("#clothes").text(r.result.today.dressing_advice);
+				}else
+				{
+					alert("Invalid input");	
+				}
+				
+			}
+		});
+	}
+</script>
+
+</body>
+</html>
