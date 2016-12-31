@@ -1,0 +1,228 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+*
+{
+	margin:0;
+	padding:0;
+	border-radius:3px;
+	font-size:24px;
+}
+#claculator
+{
+	border:1px #000000 solid;
+	width:400px;
+	margin:100px auto;
+	border-radius:5px;
+}
+#show
+{
+	border:1px #000000 solid;
+	text-align:right;
+	margin:20px 10px;
+	padding:5px;
+	height:60px;
+	overflow:hidden;
+	word-break:normal;
+	word-wrap:break-word;
+}
+#show1,#show2
+{
+	height:30px;
+}
+#buttons
+{
+	text-align:center;
+	margin:0 auto 30px;
+	width:380px;
+	height:260px;
+}
+
+#buttons tr td
+{
+	border:1px #000000 solid;
+	width:62px;
+	height:44px;
+}
+#buttons tr td:hover
+{
+	background-color:#5BA6A7;
+	cursor:pointer;
+	-webkit-user-select:none;
+	-moz-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
+}
+</style>
+<title>计算器</title>
+</head>
+
+<body>
+
+<div id="claculator">
+<div id="show">
+	<div id="show1">0</div>
+	<div id="show2"></div>
+	
+</div>
+<table id="buttons">
+	<tr>
+    	<td id="CF" title="清空">CF</td>
+        <td id="C" title="后退一位">C</td>
+        <td id="num">num</td>
+        <td id="F" title="该键未定义">F</td>
+    </tr>
+    <tr>
+    	<td id="7" class="str">7</td>
+        <td id="8" class="str">8</td>
+        <td id="9" class="str">9</td>
+        <td id="/" class="str">/</td>
+    </tr>
+    <tr>
+    	<td id="4" class="str">4</td>
+        <td id="5" class="str">5</td>
+        <td id="6" class="str">6</td>
+        <td id="*" class="str">*</td>
+    </tr>
+    <tr>
+    	<td id="1" class="str">1</td>
+        <td id="2" class="str">2</td>
+        <td id="3" class="str">3</td>
+        <td id="+" class="str">+</td>
+    </tr>
+    <tr>
+    	<td id="0" class="str">0</td>
+        <td id="." class="str">.</td>
+        <td id="=">=</td>
+        <td id="-" class="str">-</td>
+    </tr>
+</table>
+</div>
+
+<script>
+var show1 = document.getElementById("show1");
+var show2 = document.getElementById("show2");
+var num = 0;
+var countNext = false;
+
+document.getElementById("=").onclick = result;
+
+function result(){
+	var str = show1.innerHTML;
+	var reg = /^[+-]?\d+\.?\d*([\+\-\*/]\d+\.?\d*)*$/;
+	if(!reg.exec(str)){
+		show2.innerHTML = "Error Input";
+		return;		
+	}
+	if(str[0]=="-"){
+		str =0+str;
+	}
+	if(str[0]=="+"){
+		str =str.substring(1);
+	}
+	num = count(str);
+	countNext = true;
+	show2.innerHTML = num;
+}
+
+function count(str){
+	var reg1 = /[\+\-]/g;
+	var op = [],op1,i = 0;
+	var numArr = [];
+	while((op1 = reg1.exec(str))!=null){
+		op[i] = op1;
+		i++;
+	}
+	numArr = str.split(reg1);
+	numArr = count1(numArr);
+	num = parseFloat(numArr[0]);
+	for(var j = 0;j<op.length;j++){
+			if(op[j]=="+")
+				num = num+numArr[j+1];
+			else
+				num = num-numArr[j+1];	
+		}
+	return num;	
+}
+function count1(arr){
+	var reg1 = /[\*\/]/g;
+	var numArr = []
+	for(var i = 0;i<arr.length;i++){
+		var a = arr[i].split(reg1);
+		var b = [],x = 0,b1;
+		while((b1=reg1.exec(arr[i]))!=null)
+		{
+			b[x] = b1;
+			x++;	
+		}
+		numArr[i] = parseFloat(a[0]);
+		for(var j = 0;j<b.length;j++){
+			if(b[j]=="*")
+				numArr[i] = numArr[i]*a[j+1];
+			else
+				numArr[i] = numArr[i]/a[j+1];	
+		}
+	}
+	return numArr;	
+}
+
+
+var str = document.getElementsByClassName("str");
+for(var i= 0;i<str.length;i++)
+{
+	str[i].onclick = strClick;
+}
+
+function strClick(){  
+	if(countNext){
+		show1.innerHTML = this.id;
+		countNext = false;
+		return;
+	}
+	if(show1.innerHTML=="0"){
+		if(this.id!='.'){
+			show1.innerHTML = this.id;
+			return;	
+		}else{
+			show1.innerHTML = 0+this.id;
+			return;
+		}
+	}
+	if(show1.innerHTML.length<24){
+		show1.innerHTML = show1.innerHTML+this.id;	
+	}
+}
+
+document.getElementById("CF").onclick= function(){
+	show1.innerHTML = "0";
+	show2.innerHTML = " ";	
+	num = 0;
+}
+document.getElementById("C").onclick= function(){
+	var str = show1.innerHTML;
+	if(str.length==1){
+		show1.innerHTML = "0";
+		return;	
+	}
+	show1.innerHTML = str.substring(0,str.length-1);
+}
+document.getElementById("num").onclick= function(){
+	var str = show1.innerHTML+num;
+	if(countNext){
+		show1.innerHTML = num;
+		countNext = false;
+		return;	
+	}
+	if(show1.innerHTML=="0"){
+		show1.innerHTML = num;
+		return;	
+	}
+	if(str.length<24){
+		show1.innerHTML = show1.innerHTML+num;	
+	}
+}
+</script>
+</body>
+</html>
